@@ -5,3 +5,6 @@ var serviceAccount = require("./proiecttic-74a0e-firebase-adminsdk-fbsvc-a110198
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
+
+const db = admin.firestore()
+module.exports = db
