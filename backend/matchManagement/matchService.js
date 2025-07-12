@@ -29,4 +29,4 @@ const getMatchById = async (req, res) => {
   }
 };
 
-module.exports = { getMatches, getMatchById, addMatch, deleteMatch };
+module.exports = { getMatches, getMatchById };

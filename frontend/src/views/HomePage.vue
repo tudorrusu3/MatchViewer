@@ -1,22 +1,17 @@
 <template>
   <div class="div">
-    <AppNavbar />
+    <AppNavbar @searchUpdated="handleSearchUpdated" />
     <div class="hero">
       <h1>Upcoming Matches - MatchViewer</h1>
     </div>
     <div class="container-wrapper">
       <v-container fluid>
         <v-row class="match-grid">
-          <v-col
-            v-for="(match, index) in matches"
-            :key="match.id || index"
-            cols="6"
-            sm="4"
-            md="3"
-            lg="2"
-            xl="2"
-          >
+          <v-col v-for="(match, index) in filteredMatches" :key="index" cols="6" sm="4" md="3" lg="2" xl="2">
             <MatchCard :match="match" />
+          </v-col>
+           <v-col v-if="filteredMatches && filteredMatches.length === 0">
+            <p>No matches were found for your search.</p>
           </v-col>
         </v-row>
       </v-container>
@@ -37,7 +32,26 @@ export default {
   data() {
     return {
       matches: [],
+      searchQuery: '',
     };
+    }, computed: {
+
+    filteredMatches() {
+  if (!this.matches || !Array.isArray(this.matches)) return [];
+
+  const query = this.searchQuery.toLowerCase().trim();
+
+  if (query === "") {
+    return this.matches;
+  }
+
+  return this.matches.filter(match =>
+    match.homeTeam?.toLowerCase().includes(query) ||
+    match.stadium?.toLowerCase().includes(query)
+  );
+}
+
+
   },
   mounted() {
     this.getMatches();
@@ -61,7 +75,9 @@ export default {
         console.error('Error fetching matches:', error);
       }
     },
-    // Dacă vrei funcționalitate pentru bilete/favorites, poți adăuga metode similare aici
+    handleSearchUpdated(query) {
+      this.searchQuery = query;
+    }
   },
 };
 </script>
@@ -69,6 +85,7 @@ export default {
 <style scoped>
 .div {
   background-color: black;
+  min-height: 100vh;
 }
 
 .hero {
@@ -91,6 +108,12 @@ export default {
 
 .v-col {
   padding: 5px !important;
+}
+
+.v-col p {
+  color: white;
+  text-align: center;
+  padding: 20px;
 }
 
 @media (max-width: 768px) {

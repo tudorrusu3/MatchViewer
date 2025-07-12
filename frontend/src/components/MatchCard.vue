@@ -10,7 +10,7 @@
     ></v-img>
 
     <v-card-title class="title text-center">
-      {{ match.homeTeam }} - {{ formattedDate }}
+      {{ match.homeTeam }} vs {{ match.awayTeam }} - {{ formattedDate }} at {{ match.stadium }}
     </v-card-title>
 
     <v-card-subtitle class="text-center">
@@ -72,5 +72,8 @@ export default {
 
 .title {
   font-size: medium;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow: visible;
 }
 </style>
