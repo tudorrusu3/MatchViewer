@@ -1,5 +1,8 @@
 {
   "dependencies": {
-    "firebase-admin": "^13.4.0"
+    "@mdi/font": "^7.4.47",
+    "firebase-admin": "^13.4.0",
+    "vite-plugin-vuetify": "^2.1.1",
+    "vuetify": "^3.9.0"
   }
 }
