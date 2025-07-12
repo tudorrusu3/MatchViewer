@@ -18,6 +18,12 @@ const routes = [
     name: 'Register',
     component: RegisterPage,
   },
+  {
+  path: '/matches/:id',
+  name: 'matchDetails',
+  component: () => import('../views/MatchDetailPage.vue'),
+},
+
 ];
 
 const router = createRouter({

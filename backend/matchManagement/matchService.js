@@ -16,10 +16,10 @@ const getMatches = async (req, res) => {
 
 const getMatchById = async (req, res) => {
   try {
-    const { matchId } = req.params;
-    if (!matchId) return res.status(400).json({ error: 'Match ID is required.' });
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ error: 'Match ID is required.' });
 
-    const doc = await db.collection('matches').doc(matchId).get();
+    const doc = await db.collection('matches').doc(id).get();
     if (!doc.exists) return res.status(404).json({ error: 'Match not found.' });
 
     res.status(200).json({ id: doc.id, ...doc.data() });
