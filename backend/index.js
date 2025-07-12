@@ -5,6 +5,7 @@ const cors = require('cors');
 const httpLogger = require('morgan'); 
 const cookieParser = require("cookie-parser");
 const userRoutes = require('../backend/userManagement/userRouter');
+const matchRoutes = require('../backend/matchManagement/matchRouter')
 const auth = require('./middlewares/auth');
 dotenv.config();
 
@@ -21,7 +22,8 @@ const corsConfig = {
   
 app.use(cors(corsConfig));
 
-app.use( userRoutes);
+app.use(userRoutes);
+app.use(matchRoutes);
 app.use(cookieParser());
 
 app.get('/', (req, res) => {

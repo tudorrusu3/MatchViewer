@@ -6,6 +6,9 @@ frontend/node_modules/
 backend/.env
 frontend/.env
 
+backend/utils/credentials.json
+backend/db_config/proiecttic-74a0e-firebase-adminsdk-fbsvc-a110198b22.json
+
 # Ignore build/dist folders
 frontend/dist/
 

@@ -1,0 +1,76 @@
+<template>
+  <v-card class="match-card">
+    <v-img
+      :src="match.imageUrl"
+      height="250px"
+      alt="Stadium image"
+      @click="viewDetails(match.id)"
+      class="cursor-pointer"
+      cover
+    ></v-img>
+
+    <v-card-title class="title text-center">
+      {{ match.homeTeam }} - {{ formattedDate }}
+    </v-card-title>
+
+    <v-card-subtitle class="text-center">
+      <v-icon icon="mdi-ticket" class="text-gold"></v-icon>
+      <span>{{ match.ticketsAvailable }} tickets available</span>
+    </v-card-subtitle>
+
+    <v-card-actions class="d-flex justify-center">
+      <v-btn color="#3c4ebe" @click="buyTicket(match.id)">
+        <v-icon>mdi-cart</v-icon>
+        Buy Ticket
+      </v-btn>
+    </v-card-actions>
+  </v-card>
+</template>
+
+<script>
+export default {
+  props: {
+    match: {
+      type: Object,
+      required: true,
+    },
+  },
+  computed: {
+    formattedDate() {
+      return new Date(this.match.date).toLocaleDateString(undefined, {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+    },
+  },
+  methods: {
+    viewDetails(id) {
+      this.$router.push({ name: 'matchDetails', params: { id } });
+    },
+    buyTicket(matchId) {
+      // aici apelezi API-ul de cumpărare bilet sau navighezi către pagina de cumpărare
+      this.$router.push({ name: 'buyTicket', params: { id: matchId } });
+    },
+  },
+};
+</script>
+
+<style scoped>
+.match-card {
+  background-color: #121212;
+  color: white;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.text-gold {
+  color: #f5c518;
+}
+
+.title {
+  font-size: medium;
+}
+</style>
