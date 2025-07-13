@@ -78,14 +78,14 @@ export default {
       return this.$store.getters.isAuthenticated;
     },
     userName() {
-      return this.$store.getters.getUserName || "User";
-    },
+  return this.$store.getters.getUserName;
+},
   },
   methods: {
     openSearch() {
       this.searchDialog = true;
     },
-    
+
     navigateHome() {
     this.$router.push('/'); 
   },

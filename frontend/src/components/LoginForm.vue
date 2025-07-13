@@ -106,6 +106,12 @@ export default {
           const data = await response.json();
           console.log("Login successful", data);
 
+           this.$store.dispatch('login', {
+        name: data.username || this.email,
+        role: data.role,
+        userId: data.userId || null,
+      });
+
           if (data.role === "admin") {
             this.$router.push("/adminDashboard");
           } else {

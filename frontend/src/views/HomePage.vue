@@ -7,10 +7,18 @@
     <div class="container-wrapper">
       <v-container fluid>
         <v-row class="match-grid">
-          <v-col v-for="(match, index) in filteredMatches" :key="index" cols="6" sm="4" md="3" lg="2" xl="2">
+          <v-col
+            v-for="(match, index) in filteredMatches"
+            :key="index"
+            cols="6"
+            sm="4"
+            md="3"
+            lg="2"
+            xl="2"
+          >
             <MatchCard :match="match" />
           </v-col>
-           <v-col v-if="filteredMatches && filteredMatches.length === 0">
+          <v-col v-if="filteredMatches && filteredMatches.length === 0">
             <p>No matches were found for your search.</p>
           </v-col>
         </v-row>
@@ -34,26 +42,34 @@ export default {
       matches: [],
       searchQuery: '',
     };
-    }, computed: {
-
+  },
+  computed: {
     filteredMatches() {
-  if (!this.matches || !Array.isArray(this.matches)) return [];
+      if (!this.matches || !Array.isArray(this.matches)) return [];
 
-  const query = this.searchQuery.toLowerCase().trim();
+      const query = this.searchQuery.toLowerCase().trim();
 
-  if (query === "") {
-    return this.matches;
-  }
+      if (query === "") {
+        return this.matches;
+      }
 
-  return this.matches.filter(match =>
-    match.homeTeam?.toLowerCase().includes(query) ||
-    match.stadium?.toLowerCase().includes(query)
-  );
-}
-
-
+      return this.matches.filter(
+        (match) =>
+          match.homeTeam?.toLowerCase().includes(query) ||
+          match.stadium?.toLowerCase().includes(query)
+      );
+    },
+    // Adaugă computed pentru store getters dacă vrei să le folosești
+    isAuthenticated() {
+      return this.$store.getters.isAuthenticated;
+    },
+    userName() {
+      return this.$store.getters.getUserName;
+    },
   },
   mounted() {
+    console.log("isAuthenticated:", this.isAuthenticated);
+    console.log("userName:", this.userName);
     this.getMatches();
   },
   methods: {
@@ -77,7 +93,7 @@ export default {
     },
     handleSearchUpdated(query) {
       this.searchQuery = query;
-    }
+    },
   },
 };
 </script>

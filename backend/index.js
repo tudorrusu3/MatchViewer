@@ -22,9 +22,9 @@ const corsConfig = {
   
 app.use(cors(corsConfig));
 
+app.use(cookieParser());
 app.use(userRoutes);
 app.use(matchRoutes);
-app.use(cookieParser());
 
 app.get('/', (req, res) => {
     res.send('Hello World');

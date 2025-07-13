@@ -49,10 +49,26 @@ export default {
     viewDetails(id) {
       this.$router.push({ name: 'matchDetails', params: { id } });
     },
-    buyTicket(matchId) {
-      // aici apelezi API-ul de cumpărare bilet sau navighezi către pagina de cumpărare
-      this.$router.push({ name: 'buyTicket', params: { id: matchId } });
-    },
+    async buyTicket(matchId) {
+    try {
+      const response = await fetch(`http://localhost:3000/matches/${matchId}/buy-ticket`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (response.ok) {
+        alert('Bilet cumpărat cu succes!');
+        // eventual actualizează ticketsAvailable în this.match
+      } else {
+        const error = await response.json();
+        alert('Eroare la cumpărare: ' + (error.message || 'Unknown error'));
+      }
+    } catch (error) {
+      alert('Error.');
+    }
+}
   },
 };
 </script>

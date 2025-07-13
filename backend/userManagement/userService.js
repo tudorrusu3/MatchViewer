@@ -54,33 +54,34 @@ const checkEmailNotInUse = async (email) => {
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
-    const userToAuthenticate = {
-        email: email,
-        password: password
-    };
-
     if (!email || !password) {
         return res.status(400).json({ error: 'Email and password are required' });
     }
 
     try {
-        const querySnapshot = await db.collection('users').where('email', '==', userToAuthenticate.email).limit(1).get();
+        const querySnapshot = await db.collection('users').where('email', '==', email).limit(1).get();
 
         if (querySnapshot.empty) {
             return res.status(401).json({ error: 'Invalid email or password' });
         }
 
-        const userData = querySnapshot.docs[0].data();
-        const isPasswordValid = await bcrypt.compare(userToAuthenticate.password, userData.password);
+        const userDoc = querySnapshot.docs[0];
+        const userData = userDoc.data();
+        const isPasswordValid = await bcrypt.compare(password, userData.password);
 
         if (isPasswordValid) {
+            // Adaugă id-ul userului în payload-ul tokenului
             const token = jwt.sign(
-                { email: userData.email, role: userData.role },
+                { 
+                  id: userDoc.id,    // <== aici
+                  email: userData.email, 
+                  role: userData.role 
+                },
                 process.env.JWT_SECRET,
                 { expiresIn: '1h' }
             );
 
-            res.cookie('authcookie', token, { httpOnly: true, secure: false ,maxAge: 3600000 });
+            res.cookie('authcookie', token, { httpOnly: true, secure: false, maxAge: 3600000 });
             res.status(200).json({ msg: 'Login successful', role: userData.role });
         } else {
             return res.status(401).json({ error: 'Invalid email or password' });
@@ -92,4 +93,10 @@ const loginUser = async (req, res) => {
     }
 }
 
-module.exports = { registerUser, loginUser };
+const logoutUser = (req, res) => {
+    res.clearCookie('authcookie');
+    res.status(200).json({ message: 'Logged out successfully' });
+};
+
+
+module.exports = { registerUser, loginUser, logoutUser };
