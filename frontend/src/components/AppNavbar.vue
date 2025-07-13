@@ -1,7 +1,9 @@
 <template>
   <v-app-bar class="app-bar" prominent>
     <div class="app-bar-content">
-      <v-label class="app-bar-title" color="white" @click="navigateHome">MatchViewer</v-label>
+      <v-btn text class="app-bar-title" @click="navigateHome">MatchViewer</v-btn>
+
+
 
       <div class="search-container">
         <v-text-field class="search-field" v-model="searchQuery" placeholder="Search for a game" variant="outlined"
@@ -138,11 +140,11 @@ export default {
 }
 
 .app-bar-title {
-  color: white !important;
+  color: black !important;
   font-size: 1.5rem;
-  font-weight: bold;
   margin-left: 35px;
   margin-right: 35px;
+  text-transform: none !important;
 }
 
 .search-container {

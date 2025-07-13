@@ -20,7 +20,7 @@
 
     <v-card-actions class="d-flex justify-center">
       <v-btn color="#3c4ebe" @click="buyTicket(match.id)">
-        <v-icon>mdi-cart</v-icon>
+        <v-icon left>mdi-cart</v-icon>
         Buy Ticket
       </v-btn>
     </v-card-actions>
@@ -50,25 +50,26 @@ export default {
       this.$router.push({ name: 'matchDetails', params: { id } });
     },
     async buyTicket(matchId) {
-    try {
-      const response = await fetch(`http://localhost:3000/matches/${matchId}/buy-ticket`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      if (response.ok) {
-        alert('Bilet cumpărat cu succes!');
-        // eventual actualizează ticketsAvailable în this.match
-      } else {
-        const error = await response.json();
-        alert('Eroare la cumpărare: ' + (error.message || 'Unknown error'));
+      try {
+        const response = await fetch(`http://localhost:3000/matches/${matchId}/buy-ticket`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        const result = await response.json();
+
+        if (response.ok) {
+          // Emitem evenimentul către părinte
+          this.$emit('ticketBought', matchId);
+
+          //alert('Bilet cumpărat cu succes!');
+        } else {
+          alert('Eroare la cumpărare: ' + (result.message || 'Unknown error'));
+        }
+      } catch (error) {
+        alert('Eroare la conexiune.');
       }
-    } catch (error) {
-      alert('Error.');
-    }
-}
+    },
   },
 };
 </script>

@@ -16,13 +16,23 @@
             lg="2"
             xl="2"
           >
-            <MatchCard :match="match" />
+            <MatchCard :match="match" @ticketBought="handleTicketBought" />
           </v-col>
           <v-col v-if="filteredMatches && filteredMatches.length === 0">
             <p>No matches were found for your search.</p>
           </v-col>
         </v-row>
       </v-container>
+
+      <v-snackbar
+        v-model="snackbar.visible"
+        :color="snackbar.color"
+        top
+        timeout="3000"
+        elevation="2"
+      >
+        {{ snackbar.message }}
+      </v-snackbar>
     </div>
   </div>
 </template>
@@ -41,6 +51,11 @@ export default {
     return {
       matches: [],
       searchQuery: '',
+      snackbar: {
+        visible: false,
+        message: '',
+        color: 'green',
+      },
     };
   },
   computed: {
@@ -59,7 +74,6 @@ export default {
           match.stadium?.toLowerCase().includes(query)
       );
     },
-    // Adaugă computed pentru store getters dacă vrei să le folosești
     isAuthenticated() {
       return this.$store.getters.isAuthenticated;
     },
@@ -68,8 +82,6 @@ export default {
     },
   },
   mounted() {
-    console.log("isAuthenticated:", this.isAuthenticated);
-    console.log("userName:", this.userName);
     this.getMatches();
   },
   methods: {
@@ -77,9 +89,7 @@ export default {
       try {
         const response = await fetch('http://localhost:3000/matches', {
           method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
         });
         if (response.ok) {
           const data = await response.json();
@@ -94,6 +104,15 @@ export default {
     handleSearchUpdated(query) {
       this.searchQuery = query;
     },
+    handleTicketBought(matchId) {
+      const match = this.matches.find(m => m.id === matchId);
+      if (match && match.ticketsAvailable > 0) {
+        match.ticketsAvailable--;
+      }
+      this.snackbar.message = 'Bilet cumpărat cu succes!';
+      this.snackbar.color = 'green';
+      this.snackbar.visible = true;
+    }
   },
 };
 </script>
