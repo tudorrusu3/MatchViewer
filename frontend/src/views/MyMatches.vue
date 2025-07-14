@@ -1,6 +1,6 @@
 <template>
   <div class="div">
-    <AppNavbar />
+    <AppNavbar @searchUpdated="handleSearchUpdated" />
 
     <div class="hero">
       <h1>My Matches - MatchViewer</h1>
@@ -10,7 +10,7 @@
       <v-container fluid>
         <v-row class="match-grid">
           <v-col
-            v-for="(match, index) in matches"
+            v-for="(match, index) in filteredMatches"
             :key="index"
             cols="6"
             sm="4"
@@ -18,9 +18,10 @@
             lg="2"
             xl="2"
           >
-            <MatchCard :match="match" />
+            <MatchCard :match="match.match" :ticketsCount="match.ticketsCount" />
           </v-col>
-          <v-col v-if="matches.length === 0">
+
+          <v-col v-if="filteredMatches.length === 0">
             <p>You have not bought any tickets yet.</p>
           </v-col>
         </v-row>
@@ -41,19 +42,55 @@ export default {
   data() {
     return {
       matches: [],
+      searchQuery: '',
     };
   },
-  async mounted() {
-    try {
-      const response = await fetch('http://localhost:3000/myMatches', {
-        method: 'GET',
-        credentials: 'include',
+  computed: {
+    filteredMatches() {
+      const query = this.searchQuery.toLowerCase().trim();
+      if (!query) return this.matches;
+
+      return this.matches.filter(({ match }) => {
+        return (
+          match.homeTeam?.toLowerCase().includes(query) ||
+          match.awayTeam?.toLowerCase().includes(query) ||
+          match.stadium?.toLowerCase().includes(query)
+        );
       });
-      const data = await response.json();
-      this.matches = data.data || [];
-    } catch (error) {
-      console.error('Error fetching my matches:', error);
-    }
+    },
+  },
+  methods: {
+    handleSearchUpdated(query) {
+      this.searchQuery = query;
+    },
+    async fetchMyMatches() {
+      try {
+        const response = await fetch('http://localhost:3000/myMatches', {
+          method: 'GET',
+          credentials: 'include',
+        });
+        const data = await response.json();
+
+        if (data.data) {
+          // Group matches by ID and count tickets
+          const grouped = {};
+          data.data.forEach((match) => {
+            if (!grouped[match.id]) {
+              grouped[match.id] = { match, ticketsCount: 1 };
+            } else {
+              grouped[match.id].ticketsCount++;
+            }
+          });
+
+          this.matches = Object.values(grouped);
+        }
+      } catch (error) {
+        console.error('Error fetching my matches:', error);
+      }
+    },
+  },
+  mounted() {
+    this.fetchMyMatches();
   },
 };
 </script>
@@ -101,4 +138,3 @@ export default {
   }
 }
 </style>
-

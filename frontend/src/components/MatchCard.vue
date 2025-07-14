@@ -13,10 +13,17 @@
       {{ match.homeTeam }} vs {{ match.awayTeam }} - {{ formattedDate }} at {{ match.stadium }}
     </v-card-title>
 
-    <v-card-subtitle class="text-center">
-      <v-icon icon="mdi-ticket" class="text-gold"></v-icon>
-      <span>{{ match.ticketsAvailable }} tickets available</span>
-    </v-card-subtitle>
+<v-card-subtitle class="text-center subtitle-wrap">
+  <div class="info-line">
+    <v-icon icon="mdi-ticket" class="text-gold"></v-icon>
+    <span>{{ match.ticketsAvailable }} tickets available</span>
+  </div>
+  <div class="info-line" v-if="ticketsCount > 0">
+    <v-icon icon="mdi-account" class="text-gold"></v-icon>
+    <span>You own {{ ticketsCount }} ticket{{ ticketsCount > 1 ? 's' : '' }}</span>
+  </div>
+</v-card-subtitle>
+
 
     <v-card-actions class="d-flex justify-center">
       <v-btn color="#3c4ebe" @click="buyTicket(match.id)">
@@ -34,6 +41,10 @@ export default {
       type: Object,
       required: true,
     },
+    ticketsCount: {
+    type: Number,
+    default: 0,
+  },
   },
   computed: {
     formattedDate() {
@@ -92,5 +103,17 @@ export default {
   white-space: normal;
   word-wrap: break-word;
   overflow: visible;
+}
+.subtitle-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.info-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 </style>
