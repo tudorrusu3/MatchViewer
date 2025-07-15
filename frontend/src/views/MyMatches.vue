@@ -18,15 +18,31 @@
             lg="2"
             xl="2"
           >
-            <MatchCard :match="match.match" :ticketsCount="match.ticketsCount" />
+            <MatchCard
+              :match="match.match"
+              :ticketsCount="match.ticketsCount"
+              @ticketBought="handleTicketBought"
+            />
           </v-col>
 
           <v-col v-if="filteredMatches.length === 0">
-            <p>You have not bought any tickets yet.</p>
+            <p style="color: white; text-align: center; padding: 20px;">
+              You have not bought any tickets yet.
+            </p>
           </v-col>
         </v-row>
       </v-container>
     </div>
+
+    <v-snackbar
+      v-model="snackbar.visible"
+      :color="snackbar.color"
+      top
+      timeout="3000"
+      elevation="2"
+    >
+      {{ snackbar.message }}
+    </v-snackbar>
   </div>
 </template>
 
@@ -44,6 +60,11 @@ export default {
     return {
       matches: [],
       searchQuery: '',
+      snackbar: {
+        visible: false,
+        message: '',
+        color: 'green',
+      },
     };
   },
   computed: {
@@ -64,42 +85,55 @@ export default {
     handleSearchUpdated(query) {
       this.searchQuery = query;
     },
+
     async fetchMyMatches() {
-  try {
-    const response = await fetch('http://localhost:3000/myMatches', {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-    'Cache-Control': 'no-cache',
-  }
-    });
+      try {
+        const response = await fetch('http://localhost:3000/myMatches', {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Cache-Control': 'no-cache',
+          },
+        });
 
-    if (response.status === 401) {
-      // Token expirat, apelăm funcția care face logout + redirect
-      const message = await handleTokenExpiration(this.$store, this.$router);
-      // Arată mesajul în UI, de exemplu cu snackbar (dacă ai)
-      this.$emit('showSnackbar', { message, color: 'red' }); // sau altă metodă
-      return; // ieșim, nu mai procesăm date
-    }
-
-    const data = await response.json();
-
-    if (data.data) {
-      const grouped = {};
-      data.data.forEach((match) => {
-        if (!grouped[match.id]) {
-          grouped[match.id] = { match, ticketsCount: 1 };
-        } else {
-          grouped[match.id].ticketsCount++;
+        if (response.status === 401) {
+          const message = await handleTokenExpiration(this.$store, this.$router);
+          this.showSnackbar(message, 'red');
+          return;
         }
-      });
 
-      this.matches = Object.values(grouped);
-    }
-  } catch (error) {
-    console.error('Error fetching my matches:', error);
-  }
-},
+        const data = await response.json();
+
+        if (data.data) {
+          const grouped = {};
+          data.data.forEach((match) => {
+            if (!grouped[match.id]) {
+              grouped[match.id] = { match, ticketsCount: 1 };
+            } else {
+              grouped[match.id].ticketsCount++;
+            }
+          });
+
+          this.matches = Object.values(grouped);
+        } else {
+          this.matches = [];
+        }
+      } catch (error) {
+        console.error('Error fetching my matches:', error);
+        this.showSnackbar('Error fetching your matches', 'red');
+      }
+    },
+
+    handleTicketBought() {
+      this.fetchMyMatches();
+      this.showSnackbar('Ticket bought successfully!', 'green');
+    },
+
+    showSnackbar(message, color = 'red') {
+      this.snackbar.message = message;
+      this.snackbar.color = color;
+      this.snackbar.visible = true;
+    },
   },
   mounted() {
     this.fetchMyMatches();

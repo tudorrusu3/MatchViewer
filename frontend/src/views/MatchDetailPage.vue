@@ -133,7 +133,7 @@ export default {
 
         if (response.ok) {
           this.snackbar.message =
-            "Bilet cumpărat cu succes! Redirecționare către biletele tale...";
+            "Ticket bought succesfully! Redirecting to your matches.."
           this.snackbar.color = "green";
           this.snackbar.visible = true;
 

@@ -77,7 +77,7 @@ const loginUser = async (req, res) => {
                   role: userData.role 
                 },
                 process.env.JWT_SECRET,
-                { expiresIn: '1h' }
+                { expiresIn: '15m' }
             );
 
             res.cookie('authcookie', token, { httpOnly: true, secure: false, maxAge: 3600000 });

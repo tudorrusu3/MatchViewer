@@ -121,18 +121,18 @@ export default {
         console.log(data);
 
         if (response.ok) {
-          this.showSnackbar('Cont creat cu succes', 'green');
+          this.showSnackbar('Account created succesfully', 'green');
           setTimeout(() => {
             this.$router.push('/');
           }, 2000);
         } else if (response.status === 409) {
-          this.showSnackbar('Emailul este deja folosit', 'red');
+          this.showSnackbar('Email is already used', 'red');
         } else {
-          this.showSnackbar(data?.error || 'A apărut o eroare la înregistrare', 'red');
+          this.showSnackbar(data?.error || 'There is an error with auth', 'red');
         }
       } catch (error) {
         console.error(error);
-        this.showSnackbar('Eroare de rețea sau server', 'red');
+        this.showSnackbar('Server error', 'red');
       }
     },
 

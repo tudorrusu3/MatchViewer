@@ -109,7 +109,7 @@ export default {
       if (match && match.ticketsAvailable > 0) {
         match.ticketsAvailable--;
       }
-      this.snackbar.message = 'Bilet cumpărat cu succes!';
+      this.snackbar.message = 'Ticket bought succesfully!';
       this.snackbar.color = 'green';
       this.snackbar.visible = true;
     }
