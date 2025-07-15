@@ -33,6 +33,7 @@
 <script>
 import AppNavbar from '@/components/AppNavbar.vue';
 import MatchCard from '@/components/MatchCard.vue';
+import { handleTokenExpiration } from '@/utils/AuthUtils.js';
 
 export default {
   components: {
@@ -64,30 +65,41 @@ export default {
       this.searchQuery = query;
     },
     async fetchMyMatches() {
-      try {
-        const response = await fetch('http://localhost:3000/myMatches', {
-          method: 'GET',
-          credentials: 'include',
-        });
-        const data = await response.json();
+  try {
+    const response = await fetch('http://localhost:3000/myMatches', {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+    'Cache-Control': 'no-cache',
+  }
+    });
 
-        if (data.data) {
-          // Group matches by ID and count tickets
-          const grouped = {};
-          data.data.forEach((match) => {
-            if (!grouped[match.id]) {
-              grouped[match.id] = { match, ticketsCount: 1 };
-            } else {
-              grouped[match.id].ticketsCount++;
-            }
-          });
+    if (response.status === 401) {
+      // Token expirat, apelăm funcția care face logout + redirect
+      const message = await handleTokenExpiration(this.$store, this.$router);
+      // Arată mesajul în UI, de exemplu cu snackbar (dacă ai)
+      this.$emit('showSnackbar', { message, color: 'red' }); // sau altă metodă
+      return; // ieșim, nu mai procesăm date
+    }
 
-          this.matches = Object.values(grouped);
+    const data = await response.json();
+
+    if (data.data) {
+      const grouped = {};
+      data.data.forEach((match) => {
+        if (!grouped[match.id]) {
+          grouped[match.id] = { match, ticketsCount: 1 };
+        } else {
+          grouped[match.id].ticketsCount++;
         }
-      } catch (error) {
-        console.error('Error fetching my matches:', error);
-      }
-    },
+      });
+
+      this.matches = Object.values(grouped);
+    }
+  } catch (error) {
+    console.error('Error fetching my matches:', error);
+  }
+},
   },
   mounted() {
     this.fetchMyMatches();

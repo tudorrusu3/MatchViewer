@@ -22,9 +22,6 @@
             </v-btn>
           </template>
           <v-list>
-            <v-list-item @click="navigateToProfile">
-              <v-list-item-title>My Profile</v-list-item-title>
-            </v-list-item>
             <v-list-item @click="logout">
               <v-list-item-title>Log Out</v-list-item-title>
             </v-list-item>

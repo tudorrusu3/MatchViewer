@@ -70,10 +70,9 @@ const loginUser = async (req, res) => {
         const isPasswordValid = await bcrypt.compare(password, userData.password);
 
         if (isPasswordValid) {
-            // Adaugă id-ul userului în payload-ul tokenului
             const token = jwt.sign(
                 { 
-                  id: userDoc.id,    // <== aici
+                  id: userDoc.id,
                   email: userData.email, 
                   role: userData.role 
                 },
