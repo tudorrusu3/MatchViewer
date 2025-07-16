@@ -1,8 +1,8 @@
 <template>
-  <v-card class="match-card">
+  <v-card class="match-card d-flex flex-column">
     <v-img
       :src="match.imageUrl"
-      height="250px"
+      height="200px"
       alt="Stadium image"
       @click="viewDetails(match.id)"
       class="cursor-pointer"
@@ -13,17 +13,18 @@
       {{ match.homeTeam }} vs {{ match.awayTeam }} - {{ formattedDate }} at {{ match.stadium }}
     </v-card-title>
 
-<v-card-subtitle class="text-center subtitle-wrap">
-  <div class="info-line">
-    <v-icon icon="mdi-ticket" class="text-gold"></v-icon>
-    <span>{{ match.ticketsAvailable }} tickets available</span>
-  </div>
-  <div class="info-line" v-if="ticketsCount > 0">
-    <v-icon icon="mdi-account" class="text-gold"></v-icon>
-    <span>You own {{ ticketsCount }} ticket{{ ticketsCount > 1 ? 's' : '' }}</span>
-  </div>
-</v-card-subtitle>
+    <v-card-subtitle class="text-center subtitle-wrap">
+      <div class="info-line">
+        <v-icon icon="mdi-ticket" class="text-gold"></v-icon>
+        <span>{{ match.ticketsAvailable }} tickets available</span>
+      </div>
+      <div class="info-line" v-if="ticketsCount > 0">
+        <v-icon icon="mdi-account" class="text-gold"></v-icon>
+        <span>You own {{ ticketsCount }} ticket{{ ticketsCount > 1 ? 's' : '' }}</span>
+      </div>
+    </v-card-subtitle>
 
+    <v-spacer></v-spacer>
 
     <v-card-actions class="d-flex justify-center">
       <v-btn color="#3c4ebe" @click="buyTicket(match.id)">
@@ -42,9 +43,9 @@ export default {
       required: true,
     },
     ticketsCount: {
-    type: Number,
-    default: 0,
-  },
+      type: Number,
+      default: 0,
+    },
   },
   computed: {
     formattedDate() {
@@ -70,10 +71,7 @@ export default {
         const result = await response.json();
 
         if (response.ok) {
-          // Emitem evenimentul către părinte
           this.$emit('ticketBought', matchId);
-
-          //alert('Bilet cumpărat cu succes!');
         } else {
           alert('Eroare la cumpărare: ' + (result.message || 'Unknown error'));
         }
@@ -91,20 +89,27 @@ export default {
   color: white;
   border-radius: 14px;
   overflow: hidden;
-  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%; /* important pentru egalizarea înălțimii */
 }
 
-.text-gold {
-  color: #f5c518;
+.match-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }
 
 .title {
-  font-size: medium;
+  font-size: 16px;
+  padding: 12px 16px;
   white-space: normal;
   word-wrap: break-word;
-  overflow: visible;
+  text-align: center;
 }
+
 .subtitle-wrap {
+  padding: 8px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -115,5 +120,16 @@ export default {
   display: flex;
   align-items: center;
   gap: 6px;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.text-gold {
+  color: #f5c518;
+}
+
+.v-card-actions {
+  padding: 12px;
+  margin-top: auto;
 }
 </style>

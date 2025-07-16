@@ -64,6 +64,15 @@
         </v-card-text>
       </v-card>
     </v-form>
+    <v-snackbar
+      v-model="snackbar.visible"
+      :color="snackbar.color"
+      :location="snackbar.location"
+      :elevation="snackbar.elevation"
+      timeout="3000"
+    >
+      {{ snackbar.message }}
+    </v-snackbar>
   </div>
 </template>
 
@@ -77,10 +86,22 @@ export default {
       formIsValid: false,
       emailRules: [(v) => !!v || "Email is required"],
       passwordRules: [(v) => !!v || "Password is required"],
+      snackbar: {
+        visible: false,
+        message: "",
+        color: "red",
+        elevation: "2",
+        location: "top",
+      },
     };
   },
 
   methods: {
+    showSnackbar(message, color = "red") {
+      this.snackbar.message = message;
+      this.snackbar.color = color;
+      this.snackbar.visible = true;
+    },
     async submitForm() {
       if (this.formIsValid) {
         this.login(); //daca formularul este valid, execut functia de login
@@ -102,26 +123,28 @@ export default {
           }),
         });
 
+        const data = await response.json();
+
         if (response.ok) {
-          const data = await response.json();
-          console.log("Login successful", data);
+          this.$store.dispatch("login", {
+            name: data.username || this.email,
+            role: data.role,
+            userId: data.userId || null,
+          });
 
-           this.$store.dispatch('login', {
-        name: data.username || this.email,
-        role: data.role,
-        userId: data.userId || null,
-      });
+          this.showSnackbar("Login successful", "green");
 
-          if (data.role === "admin") {
-            this.$router.push("/adminDashboard");
-          } else {
-            this.$router.push("/");
-          }
+          setTimeout(() => {
+            this.$router.push(data.role === "admin" ? "/adminDashboard" : "/");
+          }, 1000);
+        } else if (response.status === 401) {
+          this.showSnackbar("Invalid email or password", "red");
         } else {
-          console.error("Login failed:", response.status);
+          this.showSnackbar(data?.error || "Login failed. Try again.", "red");
         }
       } catch (error) {
         console.error("An error occurred:", error);
+        this.showSnackbar("Server error. Please try later.", "red");
       }
     },
 
