@@ -1,7 +1,9 @@
 <template>
   <div class="register-container">
-    <v-card class="pa-6" max-width="448" style="min-width: 300px; width: 100%;">
-      <v-card-title class="text-h3 text-center font-weight-bold">Create account</v-card-title>
+    <v-card class="pa-6" max-width="448" style="min-width: 300px; width: 100%">
+      <v-card-title class="text-h3 text-center font-weight-bold"
+        >Create account</v-card-title
+      >
 
       <v-text-field
         v-model="name"
@@ -60,12 +62,14 @@
         Create your account
       </v-btn>
 
-      <router-link to="/login" class="text-decoration-none" style="color: #3c4ebe;">
-          Already have an account? Sign in
-  <v-icon icon="mdi-chevron-right"></v-icon>
-</router-link>
-
-
+      <router-link
+        to="/login"
+        class="text-decoration-none"
+        style="color: #3c4ebe"
+      >
+        Already have an account? Sign in
+        <v-icon icon="mdi-chevron-right"></v-icon>
+      </router-link>
     </v-card>
   </div>
 
@@ -84,31 +88,31 @@
 export default {
   data() {
     return {
-      name: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
       snackbar: {
         visible: false,
-        message: '',
-        color: 'red',
-        elevation: '2',
-        location: 'top',
+        message: "",
+        color: "red",
+        elevation: "2",
+        location: "top",
       },
     };
   },
   methods: {
     async register() {
       if (this.password !== this.confirmPassword) {
-        this.showSnackbar('Parolele nu coincid', 'red');
+        this.showSnackbar("Passwords are not matching", "red");
         return;
       }
 
       try {
-        const response = await fetch('http://localhost:3000/register', {
-          method: 'POST',
+        const response = await fetch("http://localhost:3000/register", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             userName: this.name,
@@ -121,29 +125,35 @@ export default {
         console.log(data);
 
         if (response.ok) {
-          this.showSnackbar('Account created succesfully', 'green');
+          this.showSnackbar(
+            "Account created successfully, please login",
+            "green"
+          );
           setTimeout(() => {
-            this.$router.push('/');
+            this.$router.push("/login");
           }, 2000);
         } else if (response.status === 409) {
-          this.showSnackbar('Email is already used', 'red');
+          this.showSnackbar("Email is already used", "red");
         } else {
-          this.showSnackbar(data?.error || 'There is an error with auth', 'red');
+          this.showSnackbar(
+            data?.error || "There is an error with auth",
+            "red"
+          );
         }
       } catch (error) {
         console.error(error);
-        this.showSnackbar('Server error', 'red');
+        this.showSnackbar("Server error", "red");
       }
     },
 
-    showSnackbar(message, color = 'red') {
+    showSnackbar(message, color = "red") {
       this.snackbar.message = message;
       this.snackbar.color = color;
       this.snackbar.visible = true;
     },
 
     goTologin() {
-      this.$router.push('/login');
+      this.$router.push("/login");
     },
   },
 };
