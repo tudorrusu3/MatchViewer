@@ -53,14 +53,15 @@
         </v-btn>
         <v-card-text class="text-center">
           <a
-            @click="goToRegister"
-            class="text-decoration-none"
-            href="#"
-            style="color: #3c4ebe"
-          >
-            No account? Create your MatchViewer account
-            <v-icon icon="mdi-chevron-right"></v-icon>
-          </a>
+  href="#"
+  @click.prevent="goToRegister"
+  class="text-decoration-none"
+  style="color: #3c4ebe"
+>
+  No account? Create your MatchViewer account
+  <v-icon icon="mdi-chevron-right"></v-icon>
+</a>
+
         </v-card-text>
       </v-card>
     </v-form>
